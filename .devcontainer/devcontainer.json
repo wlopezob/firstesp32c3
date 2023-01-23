@@ -7,11 +7,13 @@
 		"PKief.material-icon-theme",
 		"bungcip.better-toml",
 		"usernamehw.errorlens",
-		"rangav.vscode-thunder-client"
+		"rangav.vscode-thunder-client",
+		"peakchen90.open-html-in-browser"
 	],
       "settings": {
           "workbench.colorTheme": "Default Dark+",
-          "workbench.iconTheme": "material-icon-theme"
+          "workbench.iconTheme": "material-icon-theme",
+          "files.autoSave": "off"
       },
       "forwardPorts": [3000]
   }
