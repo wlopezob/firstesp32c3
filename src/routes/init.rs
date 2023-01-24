@@ -1,11 +1,13 @@
 use crate::{
     controller::{
         home_controller, json_controller, middleware_message, mirror_custom_header,
-        mirror_user_agent, path_variable_controller, query_params,
+        mirror_user_agent, path_variable_controller, query_params, read_middleware_custom_header, returns_201,
     },
+    custom_middleware::set_middleware_custom_header,
     models::shared_data::SharedData,
 };
 use axum::{
+    middleware,
     routing::{get, post},
     Extension, Router,
 };
@@ -27,6 +29,13 @@ fn create_routes() -> Router {
 
     // build our application with a single route
     Router::new()
+        .route(
+            "/read_middleware_custom_header",
+            get(read_middleware_custom_header::read_middleware_custom_header),
+        )
+        .route_layer(middleware::from_fn(
+            set_middleware_custom_header::set_middleware_custom_header,
+        ))
         .route("/", get(|| async { "Hello world" }))
         .route("/hello", get(home_controller::hello))
         .route("/mirror_body_string", post(home_controller::text))
@@ -48,6 +57,7 @@ fn create_routes() -> Router {
             "/middleware_message",
             get(middleware_message::middleware_message),
         )
+        .route("/returns_201", post(returns_201::returns_201))
         .route("/weather", get(home_controller::weather))
         .layer(cors)
         .layer(Extension(shared_data))
