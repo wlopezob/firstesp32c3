@@ -8,3 +8,8 @@ cargo watch -x run ##execute with watch
 cargo doc
 cargo doc --open
 ```
+
+## Axum Features
+```
+cargo add axum -F headers
+```
