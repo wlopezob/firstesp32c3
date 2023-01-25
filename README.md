@@ -13,3 +13,24 @@ cargo doc --open
 ```
 cargo add axum -F headers
 ```
+## Read .env
+```
+cargo add dotenvy
+cargo add dotenvy_macro
+```
+
+## Sea-ORM cli install
+```
+cargo install sea-orm-cli #install orm-clir
+
+# List all available commands
+sea-orm-cli -h
+
+# List all subcommands available in `generate` command
+sea-orm-cli generate -h
+
+# Show how to use `generate entity` subcommand
+sea-orm-cli generate entity -h
+
+sea-orm-cli generate entity -o src/models # generate entity
+```
