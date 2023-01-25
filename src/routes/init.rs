@@ -1,7 +1,8 @@
 use crate::{
     controller::{
         home_controller, json_controller, middleware_message, mirror_custom_header,
-        mirror_user_agent, path_variable_controller, query_params, read_middleware_custom_header, returns_201,
+        mirror_user_agent, path_variable_controller, query_params, read_middleware_custom_header, returns_201, get_json::get_json,
+        validate_with_serde,
     },
     custom_middleware::set_middleware_custom_header,
     models::shared_data::SharedData,
@@ -59,6 +60,8 @@ fn create_routes() -> Router {
         )
         .route("/returns_201", post(returns_201::returns_201))
         .route("/weather", get(home_controller::weather))
+        .route("/get_json", get(get_json))
+        .route("/validate_data", post(validate_with_serde::validate_with_serde))
         .layer(cors)
         .layer(Extension(shared_data))
 }

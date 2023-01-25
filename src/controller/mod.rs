@@ -7,3 +7,5 @@ pub mod mirror_custom_header;
 pub mod middleware_message;
 pub mod read_middleware_custom_header;
 pub mod returns_201;
+pub mod get_json;
+pub mod validate_with_serde;
