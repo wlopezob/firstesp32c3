@@ -34,3 +34,8 @@ sea-orm-cli generate entity -h
 
 sea-orm-cli generate entity -o src/models # generate entity
 ```
+
+## Validate Imput
+```
+cargo add validator -F derive
+```

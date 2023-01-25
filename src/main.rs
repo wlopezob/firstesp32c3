@@ -13,6 +13,6 @@ async fn main() {
    // load environment variables from .env file
    dotenv().expect(".env file not found");
    let database_uri = dotenv!("DATABASE_URL");
-   database::run(database_uri);
-   //run().await;
+   //database::run(database_uri);
+   run(database_uri).await;
 }
