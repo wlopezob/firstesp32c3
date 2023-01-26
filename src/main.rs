@@ -3,7 +3,6 @@ mod models;
 mod services;
 mod routes;
 mod custom_middleware;
-mod database;
 use dotenvy::dotenv;
 use dotenvy_macro::dotenv;
 use crate::routes::init::run;
