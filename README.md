@@ -39,3 +39,9 @@ sea-orm-cli generate entity -o src/models # generate entity
 ```
 cargo add validator -F derive
 ```
+
+## file with database conection string
+```
+.env #file
+DATABASE_URL=postgres://vuzitaei:0Yflq8UdUrVJhwCVIVuh8TzwKk_Z0sZX@abul.db.elephantsql.com/vuzitaei # connection string
+```
