@@ -1,8 +1,15 @@
-use axum::{extract::Path, response::IntoResponse, Extension, Json};
-use http::StatusCode;
-use sea_orm::{DatabaseConnection, EntityTrait};
+use axum::{
+    extract::{Path, Query},
+    http::StatusCode,
+    Extension, Json,
+};
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter};
 
-use crate::models::{response_task::ResponseTask, tasks::Entity as Tasks};
+use crate::models::{
+    get_task_query_param::GetTaskQueryParam,
+    response_task::ResponseTask,
+    tasks::{self, Entity as Tasks},
+};
 
 pub async fn get_one_task(
     Extension(database): Extension<DatabaseConnection>,
@@ -23,8 +30,19 @@ pub async fn get_one_task(
 
 pub async fn get_all_tasks(
     Extension(db): Extension<DatabaseConnection>,
+    Query(query_params): Query<GetTaskQueryParam>,
 ) -> Result<Json<Vec<ResponseTask>>, StatusCode> {
+    let mut priority_filter = Condition::all();
+    if let Some(priority) = query_params.priority {
+        priority_filter = if priority.is_empty() {
+            priority_filter.add(tasks::Column::Priority.is_null())
+        } else {
+            priority_filter.add(tasks::Column::Priority.eq(priority))
+        }
+    }
+    dbg!(&priority_filter);
     let tasks = Tasks::find()
+        .filter(priority_filter)
         .all(&db)
         .await
         .map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?
