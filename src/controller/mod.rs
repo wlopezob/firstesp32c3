@@ -12,3 +12,5 @@ pub mod validate_with_serde;
 pub mod custom_json_extractor;
 pub mod create_task;
 pub mod get_task;
+pub mod update_task;
+pub mod delete_task;

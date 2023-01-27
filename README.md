@@ -45,3 +45,8 @@ cargo add validator -F derive
 .env #file
 DATABASE_URL=postgres://user:password@server/database # connection string
 ```
+
+## serializar input optionales
+```
+cargo add serde_with
+```

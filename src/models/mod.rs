@@ -10,3 +10,4 @@ pub mod response_task;
 pub mod tasks;
 pub mod users;
 pub mod get_task_query_param;
+pub mod atomic_update;
