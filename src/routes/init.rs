@@ -3,7 +3,7 @@ use crate::{
         create_task::create_task, custom_json_extractor, get_json::get_json, home_controller,
         json_controller, middleware_message, mirror_custom_header, mirror_user_agent,
         path_variable_controller, query_params, read_middleware_custom_header, returns_201,
-        validate_with_serde, get_task::{get_all_tasks, get_one_task}, update_task, delete_task::delete_task,
+        validate_with_serde, get_task::{get_all_tasks, get_one_task}, update_task, delete_task::delete_task, users::{create_user, login},
     },
     custom_middleware::set_middleware_custom_header,
     models::shared_data::SharedData,
@@ -78,6 +78,8 @@ fn create_routes(database: DatabaseConnection) -> Router {
         .route("/tasks/:task_id", put(update_task::update_task))
         .route("/tasks/:task_id", patch(update_task::partial_update))
         .route("/tasks/:task_id", delete(delete_task))
+        .route("/users", post(create_user))
+        .route("/users/login", post(login))
         .layer(cors)
         .layer(Extension(shared_data))
         .layer(Extension(database))
