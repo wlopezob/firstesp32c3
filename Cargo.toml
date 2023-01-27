@@ -15,7 +15,7 @@ tokio-stream = "0.1.7"
 async-session = "3.0.0"
 http = "0.2.4"
 serde = {version="1.0.151", features = ["derive"]}
-chrono = "0.4.19"
+chrono = { version = "0.4.19", features = ["serde"] }
 rand = "0.8.4"
 sea-orm = { version = "0.10.7", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
 dotenvy = "0.15.6"

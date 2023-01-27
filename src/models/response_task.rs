@@ -1,3 +1,4 @@
+use chrono::{FixedOffset, DateTime};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -6,4 +7,5 @@ pub struct ResponseTask {
     pub title: String,
     pub priority: Option<String>,
     pub description: Option<String>,
+    pub deleted_at: Option<DateTime<FixedOffset>>
 }

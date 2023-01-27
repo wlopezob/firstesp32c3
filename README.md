@@ -50,3 +50,8 @@ DATABASE_URL=postgres://user:password@server/database # connection string
 ```
 cargo add serde_with
 ```
+
+## manejo de fechas chrono
+```
+cargo add chrono -F serde
+```
