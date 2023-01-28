@@ -1,6 +1,6 @@
 use crate::models::tasks::{self, Entity as Tasks};
 use axum::{
-    extract::{Path, Query},
+    extract::{Path, Query, State},
     Extension,
     http::StatusCode,
 };
@@ -16,7 +16,7 @@ pub struct QueryParams {
 }
 pub async fn delete_task(
     Path(task_id): Path<i32>,
-    Extension(db): Extension<DatabaseConnection>,
+    State(db): State<DatabaseConnection>,
     Query(query_params): Query<QueryParams>,
 ) -> Result<(), StatusCode> {
     /*let task = Tasks::find_by_id(task_id).one(&db)

@@ -16,6 +16,7 @@ use crate::{
     models::shared_data::SharedData,
 };
 use axum::{
+    extract::FromRef,
     middleware,
     routing::{delete, get, patch, post, put},
     Extension, Router,
@@ -34,10 +35,15 @@ pub async fn run(database_uri: &str) {
         .unwrap();
 }
 
+#[derive(Clone, FromRef)]
+pub struct AppState {
+    pub database: DatabaseConnection,
+    pub shared_data: SharedData
+}
 fn create_routes(database: DatabaseConnection) -> Router {
     let cors = CorsLayer::new().allow_origin(Any);
-    let shared_data = SharedData::new("hello from shared data".to_owned());
-
+    let shared_data = SharedData::new("hello from shared data, I am state now".to_owned());
+    let app_state = AppState { database , shared_data: shared_data.clone()};
     // build our application with a single route
     Router::new()
         .route("/users/logout", post(logout)) //no aplica el guard
@@ -47,7 +53,7 @@ fn create_routes(database: DatabaseConnection) -> Router {
         .route("/tasks/:task_id", put(update_task::update_task))
         .route("/tasks/:task_id", patch(update_task::partial_update))
         .route("/tasks/:task_id", delete(delete_task))
-        .route_layer(middleware::from_fn(guard))
+        .route_layer(middleware::from_fn_with_state(app_state.clone(), guard))
         .route("/", get(|| async { "Hello world" }))
         .route("/hello", get(home_controller::hello))
         // .route(
@@ -90,6 +96,5 @@ fn create_routes(database: DatabaseConnection) -> Router {
         .route("/users/login", post(login))
         .route("/users", post(create_user))
         .layer(cors)
-        .layer(Extension(shared_data))
-        .layer(Extension(database))
+        .with_state(app_state)
 }

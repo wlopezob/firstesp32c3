@@ -1,5 +1,6 @@
 use crate::models::tasks::Entity as Tasks;
 use crate::models::{atomic_update::RequestTaskUpdate, tasks};
+use axum::extract::State;
 use axum::{extract::Path, Extension, Json};
 use http::StatusCode;
 use sea_orm::prelude::DateTimeWithTimeZone;
@@ -45,7 +46,7 @@ pub struct RequestTaskUpdateOptional {
 
 pub async fn update_task(
     Path(task_id): Path<i32>,
-    Extension(db): Extension<DatabaseConnection>,
+    State(db): State<DatabaseConnection>,
     Json(request_task): Json<RequestTaskUpdate>,
 ) -> Result<(), StatusCode> {
     let task_update = tasks::ActiveModel {
@@ -68,7 +69,7 @@ pub async fn update_task(
 
 pub async fn partial_update(
     Path(task_id): Path<i32>,
-    Extension(db): Extension<DatabaseConnection>,
+    State(db): State<DatabaseConnection>,
     Json(request_task): Json<RequestTaskUpdateOptional>,
 ) -> Result<(), StatusCode> {
     let db_task = Tasks::find_by_id(task_id)

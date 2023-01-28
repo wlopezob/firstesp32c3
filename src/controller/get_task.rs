@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Path, Query},
+    extract::{Path, Query, State},
     http::StatusCode,
     Extension, Json,
 };
@@ -12,10 +12,10 @@ use crate::models::{
 };
 
 pub async fn get_one_task(
-    Extension(database): Extension<DatabaseConnection>,
+    State(db): State<DatabaseConnection>,
     Path(task_id): Path<i32>,
 ) -> Result<Json<ResponseTask>, StatusCode> {
-    let task = Tasks::find_by_id(task_id).one(&database).await.unwrap();
+    let task = Tasks::find_by_id(task_id).one(&db).await.unwrap();
     if let Some(task) = task {
         Ok(Json(ResponseTask {
             id: task.id,
@@ -31,7 +31,7 @@ pub async fn get_one_task(
 }
 
 pub async fn get_all_tasks(
-    Extension(db): Extension<DatabaseConnection>,
+    State(db): State<DatabaseConnection>,
     Query(query_params): Query<GetTaskQueryParam>,
 ) -> Result<Json<Vec<ResponseTask>>, StatusCode> {
     let mut priority_filter = Condition::all();

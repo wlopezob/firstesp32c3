@@ -34,7 +34,10 @@ pub fn is_valid(token: &str) -> Result<bool, AppError> {
         &Validation::new(jsonwebtoken::Algorithm::HS256),
     )
     .map_err(|error| match error.kind() {
-        jsonwebtoken::errors::ErrorKind::ExpiredSignature => AppError::new(StatusCode::UNAUTHORIZED, "Your session has expired, please login again"),
+        jsonwebtoken::errors::ErrorKind::ExpiredSignature => {
+            eprintln!("Error validanting token {:?}", error);
+            AppError::new(StatusCode::UNAUTHORIZED, "Your session has expired, please login again")
+        },
         _ => AppError::new(StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong, please try again")
     })?;
     Ok(true)

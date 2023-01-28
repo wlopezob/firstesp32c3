@@ -4,21 +4,21 @@ use axum::{
         Authorization,
     },
     Extension, Json, TypedHeader,
-    http::StatusCode
+    http::StatusCode, extract::State
 };
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
 use crate::models::users::Entity as Users;
 use crate::models::{request_task::RequestTask, tasks, users};
 pub async fn create_task(
-    Extension(database): Extension<DatabaseConnection>,
+    State(db): State<DatabaseConnection>,
     authorization: TypedHeader<Authorization<Bearer>>,
     Json(request_task): Json<RequestTask>,   
 ) -> Result<(), StatusCode> {
     let token = authorization.token();
     let user = Users::find()
         .filter(users::Column::Token.eq(token))
-        .one(&database)
+        .one(&db)
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
     let user = if let Some(db_user) = user {
@@ -35,7 +35,7 @@ pub async fn create_task(
         is_default: Set(Some(true)),
         ..Default::default()
     };
-    let result = new_task.save(&database).await.unwrap();
+    let result = new_task.save(&db).await.unwrap();
     dbg!(result);
     Ok(())
 }
