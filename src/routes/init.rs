@@ -1,16 +1,23 @@
 use crate::{
     controller::{
-        create_task::create_task, custom_json_extractor, get_json::get_json, home_controller,
-        json_controller, middleware_message, mirror_custom_header, mirror_user_agent,
-        path_variable_controller, query_params, read_middleware_custom_header, returns_201,
-        validate_with_serde, get_task::{get_all_tasks, get_one_task}, update_task, delete_task::delete_task, users::{create_user, login},
+        create_task::create_task,
+        custom_json_extractor,
+        delete_task::delete_task,
+        get_json::get_json,
+        get_task::{get_all_tasks, get_one_task},
+        guard::guard,
+        home_controller, json_controller, middleware_message, mirror_custom_header,
+        mirror_user_agent, path_variable_controller, query_params, read_middleware_custom_header,
+        returns_201, update_task,
+        users::{create_user, login, logout},
+        validate_with_serde,
     },
     custom_middleware::set_middleware_custom_header,
     models::shared_data::SharedData,
 };
 use axum::{
     middleware,
-    routing::{get, post, put, patch, delete},
+    routing::{delete, get, patch, post, put},
     Extension, Router,
 };
 use sea_orm::{Database, DatabaseConnection};
@@ -33,15 +40,23 @@ fn create_routes(database: DatabaseConnection) -> Router {
 
     // build our application with a single route
     Router::new()
-        .route(
-            "/read_middleware_custom_header",
-            get(read_middleware_custom_header::read_middleware_custom_header),
-        )
-        .route_layer(middleware::from_fn(
-            set_middleware_custom_header::set_middleware_custom_header,
-        ))
+        .route("/users/logout", post(logout)) //no aplica el guard
+        .route("/tasks", post(create_task))
+        .route("/tasks", get(get_all_tasks))
+        .route("/tasks/:task_id", get(get_one_task))
+        .route("/tasks/:task_id", put(update_task::update_task))
+        .route("/tasks/:task_id", patch(update_task::partial_update))
+        .route("/tasks/:task_id", delete(delete_task))
+        .route_layer(middleware::from_fn(guard))
         .route("/", get(|| async { "Hello world" }))
         .route("/hello", get(home_controller::hello))
+        // .route(
+        //     "/read_middleware_custom_header",
+        //     get(read_middleware_custom_header::read_middleware_custom_header),
+        // )
+        // .route_layer(middleware::from_fn(
+        //     set_middleware_custom_header::set_middleware_custom_header,
+        // ))
         .route("/mirror_body_string", post(home_controller::text))
         .route("/mirror_body_json", post(json_controller::mirror_body_json))
         .route(
@@ -72,14 +87,8 @@ fn create_routes(database: DatabaseConnection) -> Router {
             "/custom_json_extractor",
             post(custom_json_extractor::custom_json_extractor),
         )
-        .route("/tasks", post(create_task))
-        .route("/tasks", get(get_all_tasks))
-        .route("/tasks/:task_id", get(get_one_task))
-        .route("/tasks/:task_id", put(update_task::update_task))
-        .route("/tasks/:task_id", patch(update_task::partial_update))
-        .route("/tasks/:task_id", delete(delete_task))
-        .route("/users", post(create_user))
         .route("/users/login", post(login))
+        .route("/users", post(create_user))
         .layer(cors)
         .layer(Extension(shared_data))
         .layer(Extension(database))

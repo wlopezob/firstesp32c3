@@ -15,3 +15,4 @@ pub mod get_task;
 pub mod update_task;
 pub mod delete_task;
 pub mod users;
+pub mod guard;

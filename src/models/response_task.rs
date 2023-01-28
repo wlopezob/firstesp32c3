@@ -7,5 +7,6 @@ pub struct ResponseTask {
     pub title: String,
     pub priority: Option<String>,
     pub description: Option<String>,
-    pub deleted_at: Option<DateTime<FixedOffset>>
+    pub deleted_at: Option<DateTime<FixedOffset>>,
+    pub user_id: Option<i32>
 }

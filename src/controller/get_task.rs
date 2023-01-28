@@ -22,7 +22,8 @@ pub async fn get_one_task(
             title: task.title,
             priority: task.priority,
             description: task.description,
-            deleted_at:  task.deleted_at
+            deleted_at:  task.deleted_at,
+            user_id: task.user_id
         }))
     } else {
         Err(StatusCode::NOT_FOUND)
@@ -53,7 +54,8 @@ pub async fn get_all_tasks(
             title: db_task.title,
             priority: db_task.priority,
             description: db_task.description,
-            deleted_at:  db_task.deleted_at
+            deleted_at:  db_task.deleted_at,
+            user_id: db_task.user_id
 
         })
         .collect();

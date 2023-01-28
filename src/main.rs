@@ -2,6 +2,7 @@ mod controller;
 mod models;
 mod services;
 mod routes;
+mod utils;
 mod custom_middleware;
 use dotenvy::dotenv;
 use dotenvy_macro::dotenv;

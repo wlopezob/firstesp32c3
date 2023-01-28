@@ -44,6 +44,7 @@ cargo add validator -F derive
 ```
 .env #file
 DATABASE_URL=postgres://user:password@server/database # connection string
+JWT_SECRET=keyboardcar
 ```
 
 ## serializar input optionales
@@ -54,4 +55,14 @@ cargo add serde_with
 ## manejo de fechas chrono
 ```
 cargo add chrono -F serde
+```
+
+## Encript Password
+```
+cargo add bcrypt 
+```
+
+### JsonWebToken
+```
+cargo add jsonwebtoken
 ```
