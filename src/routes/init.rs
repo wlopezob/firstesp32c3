@@ -10,7 +10,7 @@ use crate::{
         mirror_user_agent, path_variable_controller, query_params, read_middleware_custom_header,
         returns_201, update_task,
         users::{create_user, login, logout},
-        validate_with_serde,
+        validate_with_serde, quotable::get_random_quote, comisaria::{comisarias},
     },
     custom_middleware::set_middleware_custom_header,
     models::shared_data::SharedData,
@@ -95,6 +95,8 @@ fn create_routes(database: DatabaseConnection) -> Router {
         )
         .route("/users/login", post(login))
         .route("/users", post(create_user))
+        .route("/quotable/random", get(get_random_quote))
+        .route("/comisarias", get(comisarias))
         .layer(cors)
         .with_state(app_state)
 }

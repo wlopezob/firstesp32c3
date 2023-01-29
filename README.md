@@ -66,3 +66,9 @@ cargo add bcrypt
 ```
 cargo add jsonwebtoken
 ```
+
+## http client
+```
+cargo add reqwest
+cargo add serde_json
+```
