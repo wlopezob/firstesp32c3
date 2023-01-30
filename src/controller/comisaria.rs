@@ -1,8 +1,7 @@
-use axum::{response::IntoResponse, Json, http::StatusCode};
+use axum::{http::StatusCode, response::IntoResponse, Json};
 use dotenvy_macro::dotenv;
-use http::HeaderMap;
-use reqwest::{get, Error};
-use serde::{Serialize, Deserialize};
+use reqwest::header::{HeaderMap, HeaderName, HeaderValue, HOST, AUTHORIZATION};
+use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -74,35 +73,79 @@ pub struct Attributes {
 pub struct Geometry {
     pub rings: Vec<Vec<Vec<i64>>>,
 }
-
 pub async fn comisarias() -> Result<String, StatusCode> {
     let url = dotenv!("API_URL_DPTO");
-    // let client = reqwest::Client::new();
-    // let mut headers = HeaderMap::new();
-    let text = reqwest::get(url)
-    .await.map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?
-    .text()
-    .await.map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?;
-    /*headers.insert(
-        "Origin",
-        "https://aplicaciones.mininter.gob.pe".parse().unwrap(),
+    let client = reqwest::Client::new();
+
+    let mut headers = HeaderMap::new();
+    // headers.insert("Accept", HeaderValue::from_static("*/*"));
+    // headers.insert("Cache-Control", HeaderValue::from_static("no-cache"));
+    headers.insert(
+        HOST,
+        HeaderValue::from_static("seguridadciudadana.mininter.gob.pe"),
     );
+    headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
+    headers.insert(
+        "Accept-Encoding",
+        HeaderValue::from_static("gzip, deflate, br"),
+    );
+    headers.insert("Connection", HeaderValue::from_static("keep-alive"));
+    dbg!(&headers);
+    let builder = reqwest::Client::builder()
+        //.default_headers(headers)
+        .build().map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?;
+    let res = builder
+        .get(url)
+        //.header(AUTHORIZATION, "Bearer [AUTH_TOKEN]")
+        .headers(headers)
+        .send()
+        .await
+        .map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    //println!("Headers Host:\n{:#?}", res.headers().get("Host").unwrap());
+    eprintln!("Response: {:?} {}", res.version(), res.status());
+    eprintln!("Headers: {:#?}\n", res.headers());
+
+    let body = res
+        .text()
+        .await
+        .map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    println!("{}", body);
+
+    Ok(body)
+}
+pub async fn comisarias1() -> Result<String, StatusCode> {
+    let url = dotenv!("API_URL_DPTO");
+    let client = reqwest::Client::new();
+    let mut headers = HeaderMap::new();
+    // let text = reqwest::get(url)
+    // .await.map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?
+    // .text()
+    // .await.map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?;
+    headers.insert("Accept", HeaderValue::from_static("*/*"));
+    headers.insert("Cache-Control", HeaderValue::from_static("no-cache"));
     headers.insert(
         "Host",
-        "seguridadciudadana.mininter.gob.pe".parse().unwrap(),
+        HeaderValue::from_static("seguridadciudadana.mininter.gob.pe"),
     );
-    headers.insert("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36".parse().unwrap());
-    headers.insert("Accept-Encoding", "gzip, deflate, br".parse().unwrap());
-*/
-    // let text = client
-    //     .get(url)
-    //     .headers(headers)
-    //     .send()
-    //     .await.map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?
-    //     .text_with_charset("utf-8")
-    //     .await.map_err(|error| {
-    //         dbg!(&error);
-    //         StatusCode::INTERNAL_SERVER_ERROR
-    //     })?;
+    headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
+    headers.insert(
+        "Accept-Encoding",
+        HeaderValue::from_static("gzip, deflate, br"),
+    );
+    headers.insert("Connection", HeaderValue::from_static("keep-alive"));
+    let text = client
+        .get(url)
+        .headers(headers)
+        .send()
+        .await
+        .map_err(|_error| StatusCode::INTERNAL_SERVER_ERROR)?
+        .text_with_charset("utf-8")
+        .await
+        .map_err(|error| {
+            dbg!(&error);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
     Ok(text)
 }
